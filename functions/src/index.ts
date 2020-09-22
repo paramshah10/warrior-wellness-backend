@@ -15,19 +15,19 @@ export const createNewAccountTemplate = functions.https.onRequest((request, resp
         const user = await admin.auth().getUser(uid);
         if (!user) {
             response.status(400).send("You are not authorized to perform this action");
-            return
         }
 
         user_info.firstName = request.body.firstName;
         user_info.lastName = request.body.lastName;
         user_info.email = request.body.email;
 
-        Promise.all([
-            admin.firestore().collection('users').doc(`${uid}`).set(user_info),
-            Object.entries(charts).forEach((entry) => {
-                admin.firestore().collection('users').doc(`${uid}`).collection('charts').doc(entry[0]).set(entry[1]);
-            }),
-        ])
+        var promises = [admin.firestore().collection('users').doc(`${uid}`).set(user_info)];
+
+        Object.entries(charts).forEach((entry) => {
+            promises.push(admin.firestore().collection('users').doc(`${uid}`).collection('charts').doc(entry[0]).set(entry[1]));
+        });
+
+        Promise.all(promises)
         .then(() => {
             response.status(200).send({ message: 'Success', code: 200 });
         })
