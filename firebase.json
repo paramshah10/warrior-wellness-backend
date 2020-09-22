@@ -4,5 +4,13 @@
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build"
     ]
+  },
+  "emulators": {
+    "firestore": {
+      "port": "5002"
+    },
+    "auth": {
+      "port": "5003"
+    }
   }
 }
